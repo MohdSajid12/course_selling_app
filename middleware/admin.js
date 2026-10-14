@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 
 function adminMiddleware(req, res, next) {
   const token = req.headers.token;
+  if(!token){
+    return res.status(404).json({msg:`Please provide token`});
+  }
 
   const decodedToken = jwt.verify(token, process.env.JWT_ADMIN);
   if (decodedToken) {
