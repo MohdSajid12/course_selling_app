@@ -97,6 +97,11 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
         return res.status(403).json({msg:`Please provide course id`});
     }
 
+    const courseFind = await courseModel.find({_id : courseId});
+    if(courseFind.length ==0){
+      return res.status(404).json({msg:`No Course Exists`});
+    }
+
     const course = await courseModel.updateOne(
       {
         _id: courseId,

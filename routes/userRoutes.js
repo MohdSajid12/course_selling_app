@@ -1,9 +1,10 @@
 const { Router } = require("express");
 const userRouter = Router();
-const { userModel } = require("../utills/db");
+const { userModel, purchaseModel, courseModel } = require("../utills/db");
 const { z } = require("zod");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const userMiddleware = require("../middleware/user");
 
 userRouter.post("/signup", async (req, res) => {
   try {
@@ -65,9 +66,14 @@ userRouter.post("/signin", async (req, res) => {
   }
 });
 
-userRouter.get("/purchases", (req, res) => {
+userRouter.get("/purchases", userMiddleware, async (req, res) => {
   try {
-    return res.status(200).json({ msg: `` });
+    const userId = req?.userId;
+    const purchases = await purchaseModel.find({ userId });
+    const courseData = await courseModel.find({
+        _id: { $in: purchases.map(x => x.courseId) }
+        });
+    return res.status(200).json({ msg: `Your Courses`, courses: purchases ,courseData :courseData});
   } catch (error) {
     return res.status(500).json({ msg: `Error ${error}` });
   }
