@@ -53,8 +53,8 @@ adminRouter.post("/signin", async (req, res) => {
     }
     if (admin) {
       const token = jwt.sign(
-        { id: user._id.toString() },
-        process.env.JWT_SECRET,
+        { id: admin._id.toString() },
+        process.env.JWT_ADMIN,
       );
       return res.status(200).json({ msg: `Signin Successfull`, token: token });
     } else {
@@ -65,7 +65,7 @@ adminRouter.post("/signin", async (req, res) => {
   }
 });
 
-adminRouter.post("/course", (req, res) => {
+adminRouter.post("/course", adminMiddleware ,(req, res) => {
   try {
     return res.status(200).json({ msg: `Signin endpoint` });
   } catch (error) {
